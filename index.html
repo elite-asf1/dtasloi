@@ -3,108 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DTASLOI | Official</title>
+    <title>DTASLOI</title>
     <style>
         body {
             background-color: #050505;
             color: #a855f7;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            /* Subtle purple radial glow to match image depth */
             background: radial-gradient(circle, #1a0b2e 0%, #050505 100%);
         }
 
-        .main-container {
-            text-align: center;
-            padding: 50px;
-            border: 4px solid #a855f7;
-            border-radius: 50%; /* Creates the circular tech-ring look */
-            box-shadow: 0 0 20px #7e22ce, inset 0 0 20px #7e22ce;
-            background: rgba(0, 0, 0, 0.8);
+        /* The Rotating Outer Ring */
+        .ring-frame {
+            position: relative;
             width: 400px;
             height: 400px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
+        }
+
+        .rotating-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px dashed #a855f7; /* Dashed looks cooler when rotating */
+            border-radius: 50%;
+            box-shadow: 0 0 20px #7e22ce;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .content {
+            z-index: 10;
+            text-align: center;
         }
 
         h1 {
-            font-size: 3rem;
-            margin: 0;
-            letter-spacing: 8px;
+            font-size: 3.5rem;
+            margin: 0 0 20px 0;
+            letter-spacing: 10px;
             color: #d8b4fe;
             text-shadow: 0 0 15px #a855f7;
-            font-weight: 900;
         }
 
-        .subtitle {
-            font-size: 0.8rem;
-            letter-spacing: 4px;
-            margin-bottom: 30px;
-            opacity: 0.7;
-        }
-
-        .button-group {
+        .btn-container {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            align-items: center;
         }
 
         .btn {
-            width: 180px;
-            padding: 12px 0;
+            width: 200px;
+            padding: 12px;
             text-decoration: none;
             font-weight: bold;
             text-transform: uppercase;
             border: 1px solid #a855f7;
-            border-radius: 2px;
-            transition: 0.4s ease;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-        }
-
-        /* Download Button - Glowing Purple */
-        .download {
+            border-radius: 4px;
+            transition: 0.3s;
             background: rgba(168, 85, 247, 0.1);
             color: #a855f7;
         }
 
-        .download:hover {
+        .btn:hover {
             background: #a855f7;
             color: white;
-            box-shadow: 0 0 25px #a855f7;
-        }
-
-        /* Discord Button - Blurple Glow */
-        .discord {
-            background: rgba(88, 101, 242, 0.1);
-            color: #5865F2;
-            border-color: #5865F2;
-        }
-
-        .discord:hover {
-            background: #5865F2;
-            color: white;
-            box-shadow: 0 0 25px #5865F2;
+            box-shadow: 0 0 20px #a855f7;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <h1>DTASLOI</h1>
-        <p class="subtitle">SYSTEM ACTIVE</p>
+    <div class="ring-frame">
+        <div class="rotating-border"></div>
         
-        <div class="button-group">
-            <a href="#" class="btn download">Download</a>
-            <a href="#" class="btn discord">Discord</a>
+        <div class="content">
+            <h1>DTASLOI</h1>
+            <div class="btn-container">
+                <a href="YOUR_LINK_HERE" class="btn" download>Download</a>
+                <a href="YOUR_DISCORD_LINK" class="btn">Discord</a>
+            </div>
         </div>
     </div>
 
