@@ -14,24 +14,22 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', sans-serif;
-            /* Deep purple radial glow for atmosphere */
             background: radial-gradient(circle, #0a001a 0%, #000000 100%);
         }
 
         #canvas { position: absolute; top: 0; left: 0; z-index: 1; }
 
-        /* The Main UI wrapper */
         .ui-wrapper {
             position: relative;
             z-index: 10;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 550px; /* Wider to ensure ring stays outside */
-            height: 550px;
+            width: 500px;
+            height: 500px;
         }
 
-        /* Rotating Rings - Now on the outside edges */
+        /* Rotating Rings */
         .ring {
             position: absolute;
             border-radius: 50%;
@@ -42,57 +40,49 @@
             animation: spin var(--speed) linear infinite;
         }
         .ring-outer { width: 100%; height: 100%; --speed: 15s; opacity: 0.6; }
-        .ring-inner { width: 92%; height: 92%; --speed: 8s; animation-direction: reverse; border-left-color: #a855f7; opacity: 0.4; }
+        .ring-inner { width: 90%; height: 90%; --speed: 8s; animation-direction: reverse; border-left-color: #a855f7; opacity: 0.4; }
 
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        /* Black and Purple Text Theme */
+        /* Content - No black hole background */
         .content { 
             text-align: center; 
-            background: rgba(0, 0, 0, 0.8); /* Solid black circle center */
-            border-radius: 50%;
-            width: 350px;
-            height: 350px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             z-index: 11;
         }
 
         h1 {
-            font-size: 3.5rem;
-            color: #a855f7; /* Pure Purple */
-            letter-spacing: 10px;
+            font-size: 4rem;
+            color: #a855f7;
+            letter-spacing: 12px;
             margin: 0;
-            text-shadow: 0 0 10px #7e22ce;
+            text-shadow: 0 0 15px #7e22ce;
         }
 
         .tool-text {
             color: #a855f7;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
             font-weight: bold;
-            margin-top: 5px;
+            margin-bottom: 25px;
             text-transform: uppercase;
         }
 
         .btn-group {
-            margin-top: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
+            align-items: center;
         }
 
         .btn {
-            width: 160px;
-            padding: 10px;
+            width: 180px;
+            padding: 12px;
             text-decoration: none;
             color: #a855f7;
             border: 1px solid #a855f7;
-            background: #000000; /* Pure Black Background */
+            background: transparent;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -102,7 +92,27 @@
 
         .btn:hover {
             background: #a855f7;
-            color: #000000; /* Black text on purple hover */
+            color: #000000;
+            box-shadow: 0 0 25px #a855f7;
+        }
+
+        /* Credits Modal */
+        #credits-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            border: 1px solid #a855f7;
+            padding: 40px;
+            text-align: center;
+            color: #a855f7;
             box-shadow: 0 0 20px #a855f7;
         }
     </style>
@@ -120,57 +130,58 @@
             <div class="tool-text">Tool</div>
             
             <div class="btn-group">
-                <a href="YOUR_DISCORD_LINK" class="btn">Discord</a>
-                <a href="#" class="btn">Credits</a>
+                <a href="https://discord.gg/QWfxCYHb3j" class="btn">Discord</a>
+                <button onclick="openCredits()" class="btn">Credits</button>
             </div>
         </div>
     </div>
 
+    <div id="credits-modal">
+        <div class="modal-content">
+            <h2>CREDITS</h2>
+            <p>Developed by: elite.asf</p>
+            <p>Co-Owned By: ._tj__________</p>
+            <button onclick="closeCredits()" class="btn" style="margin-top:20px;">Close</button>
+        </div>
+    </div>
+
     <script>
+        // Credits Logic
+        function openCredits() { document.getElementById('credits-modal').style.display = 'flex'; }
+        function closeCredits() { document.getElementById('credits-modal').style.display = 'none'; }
+
+        // Particle Logic
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         const mouse = { x: -100, y: -100 };
 
         window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('resize', () => { 
-            canvas.width = window.innerWidth; 
-            canvas.height = window.innerHeight; 
-        });
-        canvas.width = window.innerWidth; 
-        canvas.height = window.innerHeight;
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
+                this.size = Math.random() * 1.2;
                 this.baseX = this.x;
                 this.baseY = this.y;
             }
             draw() {
                 ctx.fillStyle = 'rgba(168, 85, 247, 0.4)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
             }
             update() {
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < 100) {
-                    this.x -= dx / 20;
-                    this.y -= dy / 20;
-                } else {
-                    this.x += (this.baseX - this.x) * 0.02;
-                    this.y += (this.baseY - this.y) * 0.02;
-                }
+                if (distance < 100) { this.x -= dx / 20; this.y -= dy / 20; }
+                else { this.x += (this.baseX - this.x) * 0.02; this.y += (this.baseY - this.y) * 0.02; }
             }
         }
 
-        function init() {
-            for (let i = 0; i < 80; i++) { particles.push(new Particle()); }
-        }
+        function init() { for (let i = 0; i < 80; i++) { particles.push(new Particle()); } }
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
