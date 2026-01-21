@@ -14,7 +14,8 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle, #0a001a 0%, #000000 100%);
+            /* Added a moving background gradient for more life */
+            background: radial-gradient(circle at center, #0a001a 0%, #000000 100%);
         }
 
         #canvas { position: absolute; top: 0; left: 0; z-index: 1; }
@@ -27,46 +28,65 @@
             align-items: center;
             width: 500px;
             height: 500px;
+            transition: transform 0.1s ease-out; /* For the tilt effect */
+            pointer-events: none; /* Allows mouse to pass through to canvas but buttons still work */
         }
 
-        /* Rotating Rings */
+        /* Rotating Rings with different dash patterns */
         .ring {
             position: absolute;
             border-radius: 50%;
-            border: 2px solid transparent;
+            border: 2px dashed transparent;
             border-top-color: #a855f7;
             border-bottom-color: #a855f7;
             filter: drop-shadow(0 0 15px #7e22ce);
             animation: spin var(--speed) linear infinite;
         }
-        .ring-outer { width: 100%; height: 100%; --speed: 15s; opacity: 0.6; }
-        .ring-inner { width: 90%; height: 90%; --speed: 8s; animation-direction: reverse; border-left-color: #a855f7; opacity: 0.4; }
+        .ring-outer { width: 100%; height: 100%; --speed: 20s; opacity: 0.6; border-style: dotted; }
+        .ring-inner { width: 85%; height: 85%; --speed: 10s; animation-direction: reverse; border-left-color: #a855f7; opacity: 0.4; border-style: dashed; }
 
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        /* Content - No black hole background */
         .content { 
             text-align: center; 
             z-index: 11;
+            pointer-events: auto; /* Re-enables clicking for buttons */
         }
 
         h1 {
-            font-size: 4rem;
+            font-size: 4.5rem;
             color: #a855f7;
-            letter-spacing: 12px;
+            letter-spacing: 15px;
             margin: 0;
-            text-shadow: 0 0 15px #7e22ce;
+            text-shadow: 0 0 20px #7e22ce;
+            cursor: default;
+            user-select: none;
+            transition: 0.2s;
+        }
+
+        /* Cool Glitch Effect on Hover */
+        h1:hover {
+            text-shadow: 3px 0 #ff00ff, -3px 0 #00ffff;
+            transform: skew(-3deg);
         }
 
         .tool-text {
             color: #a855f7;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             text-transform: uppercase;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; text-shadow: 0 0 10px #a855f7; }
+            100% { opacity: 0.4; }
         }
 
         .btn-group {
@@ -82,18 +102,20 @@
             text-decoration: none;
             color: #a855f7;
             border: 1px solid #a855f7;
-            background: transparent;
+            background: rgba(0, 0, 0, 0.4);
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: 0.3s;
+            transition: 0.4s;
             cursor: pointer;
+            backdrop-filter: blur(5px);
         }
 
         .btn:hover {
             background: #a855f7;
             color: #000000;
-            box-shadow: 0 0 25px #a855f7;
+            box-shadow: 0 0 30px #a855f7;
+            letter-spacing: 5px; /* Text expands on hover */
         }
 
         /* Credits Modal */
@@ -103,17 +125,19 @@
             z-index: 100;
             left: 0; top: 0;
             width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9);
+            background-color: rgba(0,0,0,0.95);
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            border: 1px solid #a855f7;
-            padding: 40px;
+            border: 2px solid #a855f7;
+            padding: 50px;
             text-align: center;
             color: #a855f7;
-            box-shadow: 0 0 20px #a855f7;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            background: #000;
         }
     </style>
 </head>
@@ -121,7 +145,7 @@
 
     <canvas id="canvas"></canvas>
 
-    <div class="ui-wrapper">
+    <div class="ui-wrapper" id="ui">
         <div class="ring ring-outer"></div>
         <div class="ring ring-inner"></div>
         
@@ -130,7 +154,7 @@
             <div class="tool-text">Tool</div>
             
             <div class="btn-group">
-                <a href="https://discord.gg/QWfxCYHb3j" class="btn">Discord</a>
+                <a href="https://discord.gg/QWfxCYHb3j" class="btn" target="_blank">Discord</a>
                 <button onclick="openCredits()" class="btn">Credits</button>
             </div>
         </div>
@@ -138,56 +162,105 @@
 
     <div id="credits-modal">
         <div class="modal-content">
-            <h2>CREDITS</h2>
-            <p>Developed by: elite.asf</p>
-            <p>Co-Owned By: ._tj__________</p>
-            <button onclick="closeCredits()" class="btn" style="margin-top:20px;">Close</button>
+            <h2 style="letter-spacing: 10px;">CREDITS</h2>
+            <hr style="border: 0.5px solid #a855f7; margin: 20px 0;">
+            <p style="font-size: 1.2rem;">Developed by: <span style="font-weight:bold;">elite.asf</span></p>
+            <p style="font-size: 1.2rem;">Co-Owned By: <span style="font-weight:bold;">._tj__________</span></p>
+            <button onclick="closeCredits()" class="btn" style="margin-top:30px;">Back to System</button>
         </div>
     </div>
 
     <script>
-        // Credits Logic
         function openCredits() { document.getElementById('credits-modal').style.display = 'flex'; }
         function closeCredits() { document.getElementById('credits-modal').style.display = 'none'; }
 
-        // Particle Logic
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const ui = document.getElementById('ui');
         let particles = [];
-        const mouse = { x: -100, y: -100 };
+        const mouse = { x: null, y: null };
 
-        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        // Mouse Move Effects
+        window.addEventListener('mousemove', (e) => { 
+            mouse.x = e.x; 
+            mouse.y = e.y; 
+
+            // Tilt UI effect
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            const dx = (e.x - cx) / cx;
+            const dy = (e.y - cy) / cy;
+            ui.style.transform = `rotateY(${dx * 20}deg) rotateX(${-dy * 20}deg)`;
+        });
+
+        window.addEventListener('resize', () => { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        });
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight;
 
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.2;
-                this.baseX = this.x;
-                this.baseY = this.y;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(168, 85, 247, 0.4)';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
             }
             update() {
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < 100) { this.x -= dx / 20; this.y -= dy / 20; }
-                else { this.x += (this.baseX - this.x) * 0.02; this.y += (this.baseY - this.y) * 0.02; }
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = '#a855f7';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        function init() { for (let i = 0; i < 80; i++) { particles.push(new Particle()); } }
+        function init() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                // Draw connecting lines between nearby particles
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(168, 85, 247, ${1 - distance/100})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
+            handleParticles();
             requestAnimationFrame(animate);
         }
-        init(); animate();
+        init();
+        animate();
     </script>
 </body>
 </html>
