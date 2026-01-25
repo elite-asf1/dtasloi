@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DTASLOI</title>
+    <title>DTASLOI | Advanced Interface</title>
     <style>
+        :root {
+            --primary: #a855f7;
+            --primary-glow: #7e22ce;
+            --bg-dark: #000000;
+            --bg-accent: #0f0026;
+        }
+
         body {
-            background-color: #000000;
+            background-color: var(--bg-dark);
             margin: 0;
             overflow: hidden;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at center, #0f0026 0%, #000000 100%);
-            perspective: 1000px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, var(--bg-accent) 0%, var(--bg-dark) 100%);
+            perspective: 1200px;
         }
 
-        #canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        #canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
+        /* Main UI Container */
         .ui-wrapper {
             position: relative;
             z-index: 10;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 500px;
-            height: 500px;
-            transition: transform 0.1s ease-out;
+            width: 600px;
+            height: 600px;
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1);
             transform-style: preserve-3d;
-            pointer-events: none;
         }
 
         /* Rotating Rings */
@@ -38,112 +46,132 @@
             position: absolute;
             border-radius: 50%;
             border: 2px dashed transparent;
-            border-top-color: #a855f7;
-            border-bottom-color: #a855f7;
-            filter: drop-shadow(0 0 15px #7e22ce);
+            border-top-color: var(--primary);
+            border-bottom-color: var(--primary);
+            filter: drop-shadow(0 0 15px var(--primary-glow));
             animation: spin var(--speed) linear infinite;
+            pointer-events: none;
         }
-        .ring-outer { width: 100%; height: 100%; --speed: 20s; opacity: 0.5; border-style: double; border-width: 4px; }
-        .ring-inner { width: 85%; height: 85%; --speed: 12s; animation-direction: reverse; opacity: 0.3; }
+        .ring-outer { width: 100%; height: 100%; --speed: 25s; opacity: 0.4; border-style: double; border-width: 4px; }
+        .ring-middle { width: 90%; height: 90%; --speed: 15s; opacity: 0.2; border-style: dotted; animation-direction: reverse; }
 
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        .content { 
-            text-align: center; 
-            z-index: 11;
-            pointer-events: auto;
+        /* Content Card */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
             transform: translateZ(50px);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(168, 85, 247, 0.1);
+            width: 350px;
         }
 
         h1 {
-            font-size: 4.5rem;
-            color: #a855f7;
-            letter-spacing: 15px;
-            margin: 0;
-            text-shadow: 0 0 15px #7e22ce;
-            cursor: default;
-            user-select: none;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        h1:hover {
-            color: #e9d5ff; /* Lighter Purple */
-            text-shadow: 0 0 30px #a855f7, 0 0 50px #7e22ce;
-            transform: scale(1.05);
-            letter-spacing: 18px;
-        }
-
-        .tool-text {
-            color: #a855f7;
+            font-size: 3rem;
+            color: var(--primary);
             letter-spacing: 10px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            animation: pulse 2s infinite;
+            margin: 0 0 10px 0;
+            text-shadow: 0 0 15px var(--primary-glow);
+            transition: 0.4s;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-        }
-
-        .btn-group {
+        /* Interactive Tabs */
+        .tab-nav {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+            padding-bottom: 15px;
         }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(168, 85, 247, 0.5);
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            padding: 5px 10px;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .tab-btn:hover { color: #fff; }
+
+        /* Tab Content States */
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
 
         .btn {
-            width: 180px;
+            width: 100%;
             padding: 12px;
             text-decoration: none;
-            color: #a855f7;
-            border: 1px solid #a855f7;
-            background: rgba(0, 0, 0, 0.6);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            background: rgba(168, 85, 247, 0.05);
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: 0.3s;
             cursor: pointer;
-            backdrop-filter: blur(4px);
+            box-sizing: border-box;
         }
 
         .btn:hover {
-            background: #a855f7;
+            background: var(--primary);
             color: #000;
-            box-shadow: 0 0 25px #a855f7;
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
         }
 
-        /* Credits Modal */
-        #credits-modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
+        /* Status Indicators */
+        .status-bar {
+            font-size: 0.7rem;
+            color: var(--primary);
+            margin-top: 20px;
+            opacity: 0.6;
+            font-family: monospace;
         }
 
-        .modal-content {
-            border-left: 5px solid #a855f7;
-            background: linear-gradient(90deg, rgba(26,0,51,0.8) 0%, rgba(0,0,0,0.9) 100%);
-            padding: 60px;
-            text-align: left;
-            color: #a855f7;
-            box-shadow: -10px 0 30px rgba(168, 85, 247, 0.2);
-            max-width: 400px;
-        }
+        .glitch-text { animation: pulse 2s infinite; }
 
-        .modal-content h2 { letter-spacing: 5px; border-bottom: 1px solid #a855f7; padding-bottom: 10px; }
-        .credit-line { margin: 15px 0; font-family: monospace; font-size: 1.1rem; }
-        .credit-name { color: #fff; font-weight: bold; text-shadow: 0 0 5px #a855f7; }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
     </style>
 </head>
 <body onmousedown="clickFlash()">
@@ -152,33 +180,79 @@
 
     <div class="ui-wrapper" id="ui">
         <div class="ring ring-outer"></div>
-        <div class="ring ring-inner"></div>
+        <div class="ring ring-middle"></div>
         
-        <div class="content">
+        <div class="glass-panel">
             <h1>DTASLOI</h1>
-            <div class="tool-text">Tool</div>
             
-            <div class="btn-group">
-                <a href="https://discord.gg/QWfxCYHb3j" class="btn" target="_blank">Discord</a>
-                <button onclick="openCredits()" class="btn">Credits</button>
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showTab('home')">HOME</button>
+                <button class="tab-btn" onclick="showTab('social')">SOCIAL</button>
+                <button class="tab-btn" onclick="showTab('info')">INFO</button>
+            </div>
+
+            <div id="home" class="tab-content active">
+                <div class="btn-group">
+                    <button class="btn" onclick="playFeedback()">INITIALIZE CORE</button>
+                    <button class="btn" onclick="playFeedback()">SYSTEM CHECK</button>
+                </div>
+            </div>
+
+            <div id="social" class="tab-content">
+                <div class="btn-group">
+                    <a href="https://discord.gg/QWfxCYHb3j" class="btn" target="_blank">Discord Server</a>
+                    <button class="btn" onclick="alert('Copied link!')">Invite Link</button>
+                </div>
+            </div>
+
+            <div id="info" class="tab-content">
+                <div style="color: var(--primary); font-size: 0.8rem; text-align: left; line-height: 1.6;">
+                    <div style="margin-bottom: 8px;">> DEV: <span style="color:white">elite.asf</span></div>
+                    <div style="margin-bottom: 8px;">> CO-OWNER: <span style="color:white">._tj__________</span></div>
+                    <div style="margin-bottom: 8px;">> VERSION: <span style="color:white">2.0.4-Stable</span></div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                SYSTEM STATUS: <span class="glitch-text">OPERATIONAL</span>
             </div>
         </div>
     </div>
 
-    <div id="credits-modal">
-        <div class="modal-content">
-            <h2>ACCESS_CREDITS</h2>
-            <div class="credit-line">> DEVELOPER: <span class="credit-name">elite.asf</span></div>
-            <div class="credit-line">> CO-OWNER: <span class="credit-name">._tj__________</span></div>
-            <div class="credit-line">> STATUS: <span class="credit-name">ONLINE</span></div>
-            <button onclick="closeCredits()" class="btn" style="margin-top:30px; width: 100%;">DISMISS</button>
-        </div>
-    </div>
-
     <script>
-        function openCredits() { document.getElementById('credits-modal').style.display = 'flex'; }
-        function closeCredits() { document.getElementById('credits-modal').style.display = 'none'; }
+        // Tab Logic
+        function showTab(tabId) {
+            playFeedback();
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Show selected
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
 
+        // Audio Feedback (Optional - browsers require user interaction first)
+        function playFeedback() {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = context.createOscillator();
+            const gain = context.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(800, context.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, context.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.1);
+            oscillator.connect(gain);
+            gain.connect(context.destination);
+            oscillator.start();
+            oscillator.stop(context.currentTime + 0.1);
+        }
+
+        // --- Original Particle and Parallax Logic ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const ui = document.getElementById('ui');
@@ -186,15 +260,13 @@
         let flash = 0;
         const mouse = { x: -100, y: -100 };
 
-        function clickFlash() {
-            flash = 100; // Trigger brightness on click
-        }
+        function clickFlash() { flash = 150; }
 
         window.addEventListener('mousemove', (e) => { 
             mouse.x = e.x; 
             mouse.y = e.y; 
-            const xAxis = (window.innerHeight / 2 - e.pageY) / 15;
-            const yAxis = (window.innerWidth / 2 - e.pageX) / 15;
+            const xAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            const yAxis = (window.innerWidth / 2 - e.pageX) / 25;
             ui.style.transform = `rotateY(${yAxis}deg) rotateX(${xAxis}deg)`;
         });
 
@@ -207,13 +279,14 @@
 
         class Particle {
             constructor() {
+                this.reset();
+            }
+            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2 + 0.5;
-                this.baseX = this.x;
-                this.baseY = this.y;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
             }
             update() {
                 this.x += this.vx;
@@ -221,15 +294,14 @@
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx*dx + dy*dy);
-                if (distance < 200) {
+                if (distance < 150) {
                     this.x += dx * 0.01;
                     this.y += dy * 0.01;
                 }
-                if (this.x > canvas.width || this.x < 0) this.vx *= -1;
-                if (this.y > canvas.height || this.y < 0) this.vy *= -1;
+                if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) this.reset();
             }
             draw() {
-                let opacity = 0.4 + (flash / 200);
+                let opacity = 0.3 + (flash / 500);
                 ctx.fillStyle = `rgba(168, 85, 247, ${opacity})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -238,11 +310,11 @@
         }
 
         function init() {
-            for (let i = 0; i < 120; i++) { particles.push(new Particle()); }
+            for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
         }
 
         function handleParticles() {
-            if (flash > 0) flash -= 2; // Fade out click flash
+            if (flash > 0) flash -= 3;
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
@@ -251,7 +323,7 @@
                     const dy = particles[i].y - particles[j].y;
                     const dist = Math.sqrt(dx*dx + dy*dy);
                     if (dist < 100) {
-                        ctx.strokeStyle = `rgba(168, 85, 247, ${0.2 - dist/500 + flash/500})`;
+                        ctx.strokeStyle = `rgba(168, 85, 247, ${0.15 - dist/600 + flash/1000})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
@@ -263,7 +335,8 @@
         }
 
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // Trail effect
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             handleParticles();
             requestAnimationFrame(animate);
         }
